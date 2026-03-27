@@ -1,0 +1,1 @@
+ALTER TABLE "workspace_memberships" RENAME COLUMN "role_id" TO "role";

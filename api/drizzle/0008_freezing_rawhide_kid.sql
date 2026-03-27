@@ -1,0 +1,1 @@
+CREATE INDEX "messages_parent_message_id_index" ON "messages" USING btree ("parent_message_id");
