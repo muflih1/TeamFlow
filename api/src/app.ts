@@ -9,6 +9,7 @@ import apiRouter from './routes/index.js';
 import http from 'node:http';
 import {Server} from 'socket.io';
 import {verifyToken} from './lib/paseto.js';
+import { env } from './lib/env.js';
 
 const app = express();
 
@@ -16,7 +17,7 @@ app
   .use(express.json())
   .use(express.urlencoded({extended: true}))
   .use(helmet({crossOriginResourcePolicy: {policy: 'cross-origin'}}))
-  .use(cors({origin: ['http://localhost:3000'], credentials: true}))
+  .use(cors({origin: env.WWW_URL, credentials: true}))
   .use(cookieParser())
   .use(requestContextHandler)
   .use(deserializeSession);
@@ -27,7 +28,7 @@ export const server = http.createServer(app);
 
 export const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: env.WWW_URL,
   },
 });
 

@@ -1,10 +1,9 @@
 import {createMiddleware, createStart} from '@tanstack/react-start';
 
 const authMiddleware = createMiddleware().server(async ({next, request}) => {
-  const response = await fetch('http://localhost:8080/api/auth/me', {
+  const response = await fetch(`${process.env.SERVER_URL}/api/auth/me`, {
     headers: request.headers,
   });
-
   const currentUser = (await response.json()) as null | {
     id: string;
     name: string;

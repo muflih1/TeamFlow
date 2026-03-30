@@ -4,7 +4,7 @@ import superjson from 'superjson';
 import type {AppRouter} from '../../../api/src/trpc/routers/_app';
 import {getRequestHeaders} from '@tanstack/react-start/server';
 
-const trpcURL = `${import.meta.env.VITE_APP_SERVER_URL}/trpc`;
+const trpcURL = `${import.meta.env.VITE_APP_SERVER_URL}/api/trpc`;
 
 export const getTRPCClient = createIsomorphicFn()
   .server(() =>

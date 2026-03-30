@@ -4,7 +4,7 @@ let _socket: Socket | null = null;
 
 export function getSocket() {
   if (!_socket) {
-    _socket = io('http://localhost:8080', {
+    _socket = io(import.meta.env.VITE_APP_SERVER_URL, {
       autoConnect: false,
     });
   }
