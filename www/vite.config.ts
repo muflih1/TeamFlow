@@ -14,9 +14,23 @@ const config = defineConfig({
     tsconfigPaths({projects: ['./tsconfig.json']}),
     tailwindcss(),
     tanstackStart({router: {routesDirectory: 'app'}}),
-    netlify(),
+    netlify({
+      dev: {
+        redirects: {
+          enabled: true,
+        },
+      }
+    }),
     viteReact({babel: {plugins: ['babel-plugin-react-compiler']}}),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
+  },
 });
 
 export default config;

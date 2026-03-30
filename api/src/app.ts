@@ -20,7 +20,7 @@ app
   .use(helmet({crossOriginResourcePolicy: {policy: 'cross-origin'}}))
   .use(cors({origin: env.WWW_URL, credentials: true}))
   .use(cookieParser())
-  .use(morgan('common'))
+  .use(morgan('dev'))
   .use(requestContextHandler)
   .use(deserializeSession);
 

@@ -3,13 +3,12 @@ import {useForm} from '@tanstack/react-form';
 import {z} from 'zod';
 import {AuthTextInput} from './auth-text-input';
 import {useState} from 'react';
+import {getAxios} from '@/lib/axios';
 import {useMutation} from '@tanstack/react-query';
 import {isAxiosError} from 'axios';
 import {CircleAlertIcon} from 'lucide-react';
 import {useFadeEffect} from '@/hooks/use-fade-effect';
 import {cn} from '@/lib/utils';
-import {signIn as signInFn} from '../lib/auth.functions';
-import {useServerFn} from '@tanstack/react-start';
 
 const schema = z.object({
   email: z.email(),
@@ -20,10 +19,10 @@ type FormData = z.infer<typeof schema>;
 
 export function SignInForm() {
   const [error, setError] = useState<null | string>(null);
-  const signIn = useServerFn(signInFn);
+  const axios = getAxios();
 
   const {mutate: signInMutationSync} = useMutation({
-    mutationFn: (data: FormData) => signIn({data}),
+    mutationFn: (values: FormData) => axios.post('/auth/sign-in', values),
   });
 
   const form = useForm({
