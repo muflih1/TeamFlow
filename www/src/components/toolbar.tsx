@@ -28,6 +28,7 @@ export function Toolbar({
   onEditClick,
   onDeleteClick,
   onReactionChange,
+  onThreadClick,
   withThreadButton = true,
   isCompact = false,
 }: Props) {
@@ -36,7 +37,7 @@ export function Toolbar({
       role='toolbar'
       className={cn('absolute -top-5 right-5', isCompact && '-top-6')}
     >
-      <div className='group-hover:opacity-100 opacity-0 transition-opacity border bg-white shadow-md rounded-lg p-0.5'>
+      <div className='group-hover:opacity-100 opacity-0 transition-opacity border bg-white shadow-md rounded-lg p-0.5 flex items-center'>
         <EmojiPickerTrigger
           tooltip='Add reaction...'
           tooltipProps={{
@@ -63,7 +64,7 @@ export function Toolbar({
               size='icon-sm'
               disabled={isPending}
               tabIndex={isPending ? -1 : 0}
-              onClick={() => {}}
+              onClick={onThreadClick}
             >
               <MessageCircleIcon size={16} />
             </Button>
@@ -89,6 +90,7 @@ export function Toolbar({
               type='button'
               variant='destructive'
               size='icon-sm'
+              className='bg-transparent hover:bg-destructive/10'
               disabled={isPending}
               tabIndex={isPending ? -1 : 0}
               onClick={onDeleteClick}

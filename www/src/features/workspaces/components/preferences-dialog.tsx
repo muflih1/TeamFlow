@@ -8,12 +8,9 @@ import {TrashIcon} from 'lucide-react';
 import {useUpdateWorkspaceDialog} from '../hooks/use-update-workspace-dialog';
 import {useWorkspaceId} from '../hooks/use-workspace-id';
 import {useTRPC} from '@/lib/trpc';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useMutation} from '@tanstack/react-query';
 import {toast} from 'sonner';
-import {useNavigate} from '@tanstack/react-router';
 import {useConfirm} from '@/hooks/use-confirm';
-import {useEffect} from 'react';
-import {getSocket} from '@/lib/socket';
 
 export function PreferencesDialog({
   workspace,
@@ -22,30 +19,8 @@ export function PreferencesDialog({
   onClose: () => void;
   workspace: any;
 }) {
-  const navigate = useNavigate();
   const workspaceId = useWorkspaceId();
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
-
-  useEffect(() => {
-    const socket = getSocket();
-
-    socket.on('workspace_deleted', ({data}) => {
-      queryClient.setQueryData(
-        trpc.workspaces.get.queryKey({id: workspaceId}),
-        () => undefined,
-      );
-      queryClient.setQueryData(trpc.workspaces.list.queryKey(), old => {
-        if (!old) return [];
-        return old.filter(w => w.id !== data.workspaceId);
-      });
-      navigate({to: '/', replace: true});
-    });
-
-    return () => {
-      socket.off('workspace_deleted');
-    };
-  }, [workspaceId, trpc, queryClient]);
 
   const {mutateAsync: deleteWorkspaceMutationAsync, isPending} = useMutation(
     trpc.workspaces.delete.mutationOptions(),

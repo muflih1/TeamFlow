@@ -6,7 +6,9 @@ import {channelsRouter} from './channels.router.js';
 import {filesRouter} from './files.router.js';
 import {membershipsRouter} from './memberships.router.js';
 import {workspacesRouter} from './workspaces.router.js';
-import { messagesRouter } from './messages.router.js';
+import {messagesRouter} from './messages.router.js';
+import {reactionsRouter} from './reactions.router.js';
+import {conversationsRouter} from './conversations.router.js';
 
 export const appRouter = createTRPCRouter({
   workspaces: workspacesRouter,
@@ -14,6 +16,8 @@ export const appRouter = createTRPCRouter({
   channels: channelsRouter,
   files: filesRouter,
   messages: messagesRouter,
+  reactions: reactionsRouter,
+  conversations: conversationsRouter,
   getSocketAuthToken: baseProcedure.mutation(async ({ctx}) => {
     const session = ctx.session;
     if (!session) {

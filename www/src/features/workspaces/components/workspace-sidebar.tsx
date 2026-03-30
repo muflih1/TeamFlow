@@ -5,7 +5,7 @@ import {
   AlertCircleIcon,
   HashIcon,
   LoaderIcon,
-  MessageSquareTextIcon,
+  MessageCircleIcon,
   SendHorizonalIcon,
 } from 'lucide-react';
 import {WorkspaceSidebarHeader} from './workspace-sidebar-header';
@@ -55,15 +55,15 @@ export function WorkspaceSidebar() {
     <div className='flex flex-col bg-[#5e2c5f] h-full'>
       <WorkspaceSidebarHeader
         workspace={workspace}
-        canManageOrgMemberships={memebership.permissions.has(
-          'org:memberships:manage',
+        canInvite={memebership.permissions.has(
+          'org:memberships:invite',
         )}
-        canManageOrgProfile={memebership.permissions.has('org:profile:manage')}
+        canManage={memebership.permissions.has('org:profile:manage')}
       />
       <WorkspaceSidebarList>
         <WorkspaceSidebarListItem
           label='Threads'
-          icon={MessageSquareTextIcon}
+          icon={MessageCircleIcon}
           id='threads'
         />
         <WorkspaceSidebarListItem
@@ -104,7 +104,7 @@ export function WorkspaceSidebar() {
               key={m.id}
               image={null}
               label={m.user.name}
-              id={m.user.id}
+              id={m.id}
             />
           ))}
         </WorkspaceSidebarCollapsibleList>

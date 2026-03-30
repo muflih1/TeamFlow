@@ -162,6 +162,26 @@
   }
 }
 
+@utility inherit-all {
+  display: inherit;
+  margin: 0;
+  padding: 0;
+  max-height: inherit;
+  min-height: inherit;
+  height: inherit;
+  width: inherit;
+  word-wrap: break-word;
+  text-decoration: none;
+  flex-basis: inherit;
+  flex-grow: inherit;
+  flex-shrink: inherit;
+  align-items: inherit;
+  align-content: inherit;
+  justify-content: inherit;
+  min-width: inherit;
+  max-width: inherit;
+}
+
 .ql-toolbar {
   font-family: inherit !important;
   border: none !important;

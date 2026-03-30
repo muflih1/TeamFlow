@@ -13,8 +13,8 @@ import {useInviteDialog} from '../hooks/use-invite-dialog';
 
 export function WorkspaceSidebarHeader({
   workspace,
-  canManageOrgMemberships,
-  canManageOrgProfile,
+  canManage,
+  canInvite,
 }: {
   workspace: {
     id: string;
@@ -23,12 +23,13 @@ export function WorkspaceSidebarHeader({
     createdAt: Date;
     updatedAt: Date;
   };
-  canManageOrgMemberships: boolean;
-  canManageOrgProfile: boolean;
+  canManage: boolean;
+  canInvite: boolean;
 }) {
   const openPreferencesDialog = usePreferencesDialog({
     workspace,
   });
+
   const openInviteDialog = useInviteDialog({
     name: workspace.name,
     joinCode: workspace.joinCode,
@@ -59,7 +60,7 @@ export function WorkspaceSidebarHeader({
               <p className='text-xs text-muted-foreground'>Active workspace</p>
             </div>
           </DropdownMenuItem>
-          {canManageOrgMemberships && (
+          {canInvite && (
             <>
               <DropdownMenuSeparator orientation='horizontal' />
               <DropdownMenuItem
@@ -70,7 +71,7 @@ export function WorkspaceSidebarHeader({
               </DropdownMenuItem>
             </>
           )}
-          {canManageOrgProfile && (
+          {canManage && (
             <>
               <DropdownMenuSeparator orientation='horizontal' />
               <DropdownMenuItem

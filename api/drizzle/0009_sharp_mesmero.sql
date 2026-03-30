@@ -1,0 +1,2 @@
+ALTER TABLE "sessions" ALTER COLUMN "id" SET DATA TYPE smallint;--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_id_user_id_created_at_pk" PRIMARY KEY("id","user_id","created_at");

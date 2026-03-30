@@ -101,7 +101,7 @@ export function ChannelHeader({channel}: ChannelHeaderProps) {
             <Button
               type='button'
               variant='ghost'
-              className='text-lg font-semibold px-2 overflow-hidden w-auto'
+              className='text-lg font-bold px-2 overflow-hidden w-auto'
               size='sm'
             />
           }

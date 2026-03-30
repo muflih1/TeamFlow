@@ -1,24 +1,25 @@
 import type {AppRouter} from '../../../api/src/trpc/routers/_app';
-import {
-  format,
-  isSameDay,
-  isSameWeek,
-  isSameYear,
-  isToday,
-  isYesterday,
-} from 'date-fns';
+import {format, isSameDay} from 'date-fns';
 import {Message} from './message';
 import {ChannelHero} from '@/features/channels/components/channel-hero';
 import {useWorkspaceId} from '@/features/workspaces/hooks/use-workspace-id';
 import {useCurrentMembershipQuery} from '@/features/memberships/hooks/use-current-membership-query';
 import {useState} from 'react';
+import {LoaderIcon} from 'lucide-react';
+import {getDateGroupLabel} from '@/utils/get-date-group-label';
+import {ConversationHero} from '@/features/conversations/components/conversation-hero';
 
 type Props = {
   memberName?: string;
-  memberImage?: string;
+  memberImage?: string | null;
   channelName?: string;
   channelCreatedAt?: Date;
-  messages: Awaited<ReturnType<AppRouter['messages']['list']>> | undefined;
+  messages:
+    | Awaited<ReturnType<AppRouter['messages']['list']>>['items']
+    | undefined;
+  fetchNextPage: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 };
 
 export function MessageList({
@@ -27,6 +28,9 @@ export function MessageList({
   channelName,
   channelCreatedAt,
   messages,
+  hasNextPage,
+  fetchNextPage,
+  isFetchingNextPage,
 }: Props) {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const workspaceId = useWorkspaceId();
@@ -53,7 +57,7 @@ export function MessageList({
           <div className='text-center my-2 relative'>
             <hr className='absolute top-1/2 left-0 right-0 border-t border-gray-300' />
             <span className='relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm'>
-              {formatDateGroupLabel(dateKey)}
+              {getDateGroupLabel(dateKey)}
             </span>
           </div>
           {messages?.map((message, index) => {
@@ -71,7 +75,7 @@ export function MessageList({
                 memberId={message.member.id}
                 authorImage={message.member.image}
                 authorName={message.member.name}
-                // reactions={message.reactions}
+                reactions={message.reactions}
                 isEditing={message.id === editingMessageId}
                 onEditingIdChange={setEditingMessageId}
                 body={message.body}
@@ -79,29 +83,52 @@ export function MessageList({
                 createdAt={message.createdAt}
                 updatedAt={message.updatedAt}
                 isCompact={isCompact}
+                replyCount={message.replyCount}
+                replyUsersCount={message.replyUsersCount}
+                replyUsers={message.replyUsers}
+                latestReplyAt={message.latestReplyAt}
               />
             );
           })}
         </div>
       ))}
+      <div
+        className='h-1'
+        ref={node => {
+          if (node) {
+            const observer = new IntersectionObserver(
+              ([entry]) => {
+                if (entry.isIntersecting && hasNextPage) {
+                  fetchNextPage();
+                }
+              },
+              {
+                threshold: 1.0,
+              },
+            );
+            observer.observe(node);
+
+            return () => {
+              observer.unobserve(node);
+              observer.disconnect();
+            };
+          }
+        }}
+      />
+      {isFetchingNextPage && (
+        <div className='text-center my-2 relative'>
+          <hr className='absolute top-1/2 left-0 right-0 border-t border-gray-300' />
+          <span className='relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm'>
+            <LoaderIcon size={16} className='animate-spin' />
+          </span>
+        </div>
+      )}
       {channelName && channelCreatedAt && (
         <ChannelHero name={channelName} createdAt={channelCreatedAt} />
       )}
+      {memberName != null && (
+        <ConversationHero name={memberName} image={memberImage} />
+      )}
     </div>
   );
-}
-
-function formatDateGroupLabel(dateStr: string) {
-  const date = new Date(dateStr);
-  const now = new Date();
-
-  if (isToday(date)) return 'Today';
-  if (isYesterday(date)) return 'Yesterday';
-  if (isSameWeek(date, now, {weekStartsOn: 1})) {
-    return format(date, 'EEEE');
-  }
-  if (isSameYear(date, now)) {
-    return format(date, 'EEEE, MMMM d');
-  }
-  return format(date, 'EEEE, MMMM d, yyyy');
 }

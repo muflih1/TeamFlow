@@ -1,4 +1,4 @@
-import {and, eq} from 'drizzle-orm';
+import {and, eq, inArray} from 'drizzle-orm';
 import {usersTable, workspaceMembershipsTable} from '../../db/schema.js';
 import {baseProcedure, createTRPCRouter} from '../init.js';
 import z from 'zod';
@@ -85,5 +85,54 @@ export const membershipsRouter = createTRPCRouter({
         ...m,
         permissions: new Set(ROLE_PERMISSIONS[m.role]),
       }));
+    }),
+
+  get: baseProcedure
+    .input(z.object({id: z.ksuid().nonempty()}))
+    .query(async ({ctx, input}) => {
+      const userId = ctx.session?.userId;
+      if (!userId) {
+        return null;
+      }
+
+      const [member] = await ctx.db
+        .select({
+          id: workspaceMembershipsTable.id,
+          role: workspaceMembershipsTable.role,
+          name: usersTable.name,
+          email: usersTable.email,
+          image: usersTable.imageObjectKey,
+        })
+        .from(workspaceMembershipsTable)
+        .innerJoin(
+          usersTable,
+          eq(usersTable.id, workspaceMembershipsTable.userId),
+        )
+        .where(eq(workspaceMembershipsTable.id, input.id))
+        .limit(1);
+      if (!member) {
+        return null;
+      }
+
+      return member;
+    }),
+
+  batch: baseProcedure
+    .input(z.object({ids: z.array(z.ksuid().nonoptional())}))
+    .query(async ({ctx, input}) => {
+      const memberships = await ctx.db
+        .select({
+          id: workspaceMembershipsTable.id,
+          name: usersTable.name,
+          image: usersTable.imageObjectKey,
+        })
+        .from(workspaceMembershipsTable)
+        .innerJoin(
+          usersTable,
+          eq(workspaceMembershipsTable.userId, usersTable.id),
+        )
+        .where(inArray(workspaceMembershipsTable.id, input.ids));
+      
+        return memberships;
     }),
 });

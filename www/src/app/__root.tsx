@@ -13,6 +13,7 @@ import {DialogProvider} from '@/contexts/dialog-context';
 import {Toaster} from '@/components/ui/sonner';
 import {TooltipProvider} from '@/components/ui/tooltip';
 import {RouteLoadingBar} from '@/components/route-loading-bar';
+import { ThreadMessageContextProvider } from '@/contexts/thread-message-context';
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -57,7 +58,11 @@ function RootDocument({children}: {children: React.ReactNode}) {
         <RouteLoadingBar />
         <Provider>
           <DialogProvider>
-            <TooltipProvider>{children}</TooltipProvider>
+            <TooltipProvider>
+              <ThreadMessageContextProvider>
+                {children}
+              </ThreadMessageContextProvider>
+            </TooltipProvider>
           </DialogProvider>
           <Toaster />
         </Provider>

@@ -171,8 +171,8 @@ async function validateSessionToken(token: string, userId: string) {
         ),
       );
 
-    // session.secretHash = newSecretHash;
-    // session.lastRotatedAt = now;
+    session.secretHash = newSecretHash;
+    session.lastRotatedAt = now;
 
     const newToken = `${session.id}:${sqids.encode([session.createdAt])}:${newSecret}`;
     setCookie('sid', newToken, getSetSessionCookieOptions());

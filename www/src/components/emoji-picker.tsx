@@ -32,7 +32,7 @@ export function EmojiPickerTrigger({
       position={tooltipProps?.position ?? 'bottom'}
       align={tooltipProps?.align ?? 'center'}
     >
-      <span data-slot='tooltip-target-wrapper' className='inline-block'>
+      <span data-slot='tooltip-target-wrapper' className='inherit-all'>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger render={children} />
           <PopoverContent className='p-0 w-full border-none shadow-none'>

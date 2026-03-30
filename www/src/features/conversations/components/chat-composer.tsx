@@ -1,24 +1,25 @@
 import {BaseEditor} from '@/components/base-editor';
 import {useCreateMessageMutation} from '@/features/messages/hooks/use-create-message-mutation';
-import {useWorkspaceId} from '@/features/workspaces/hooks/use-workspace-id';
 import {ClientOnly} from '@tanstack/react-router';
-import {useChannelId} from '../hooks/use-channel-id';
 
-export function MessageComposer() {
-  const workspaceId = useWorkspaceId();
-  const channelId = useChannelId();
-
+export function ChatComposer({
+  workspaceId,
+  conversationId,
+}: {
+  workspaceId: string;
+  conversationId: string;
+}) {
   const {mutateSync, isPending} = useCreateMessageMutation();
 
   return (
-    <div className='px-5 w-full'>
-      <ClientOnly fallback={'Editor'}>
+    <div className='px-4 w-full'>
+      <ClientOnly fallback='ChatComposer'>
         <BaseEditor
           withEmojiButton
           withImageButton
           withSendButton
-          placeholder='Test placeholder'
-          onSend={data => mutateSync({...data, workspaceId, channelId})}
+          placeholder='Just somthing down'
+          onSend={data => mutateSync({...data, workspaceId, conversationId})}
           disabled={isPending}
         />
       </ClientOnly>

@@ -12,6 +12,8 @@ import {
   index,
   AnyPgColumn,
   bigint,
+  primaryKey,
+  smallint,
 } from 'drizzle-orm/pg-core';
 
 class KSUID {
@@ -93,25 +95,29 @@ export const usersTable = pgTable('users', {
     .$onUpdate(() => new Date()),
 });
 
-export const sessionsTable = pgTable('sessions', {
-  id: integer('id').notNull(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => usersTable.id, {onDelete: 'cascade'}),
-  secretHash: bytea('secret_hash').notNull(),
-  userAgent: text('user_agent'),
-  ipAddress: inet('ip_address'),
-  revokedAt: timestamp('revoked_at', {withTimezone: true}),
-  lastActiveAt: timestamp('last_active_at', {withTimezone: true})
-    .notNull()
-    .defaultNow(),
-  lastRotatedAt: timestamp('last_rotated_at', {withTimezone: true})
-    .notNull()
-    .defaultNow(),
-  createdAt: integer('created_at')
-    .notNull()
-    .$default(() => Math.floor(Date.now() / 1000)),
-});
+export const sessionsTable = pgTable(
+  'sessions',
+  {
+    id: smallint('id').notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => usersTable.id, {onDelete: 'cascade'}),
+    secretHash: bytea('secret_hash').notNull(),
+    userAgent: text('user_agent'),
+    ipAddress: inet('ip_address'),
+    revokedAt: timestamp('revoked_at', {withTimezone: true}),
+    lastActiveAt: timestamp('last_active_at', {withTimezone: true})
+      .notNull()
+      .defaultNow(),
+    lastRotatedAt: timestamp('last_rotated_at', {withTimezone: true})
+      .notNull()
+      .defaultNow(),
+    createdAt: integer('created_at')
+      .notNull()
+      .$default(() => Math.floor(Date.now() / 1000)),
+  },
+  t => [primaryKey({columns: [t.id, t.userId, t.createdAt]})],
+);
 
 export const workspacesTable = pgTable('workspaces', {
   id: text('id')
@@ -217,10 +223,10 @@ export const conversationsTable = pgTable(
       .references(() => workspacesTable.id, {onDelete: 'cascade'}),
     memberOneId: text('member_one_id')
       .notNull()
-      .references(() => usersTable.id, {onDelete: 'cascade'}),
+      .references(() => workspaceMembershipsTable.id, {onDelete: 'cascade'}),
     memberTwoId: text('member_two_id')
       .notNull()
-      .references(() => usersTable.id, {onDelete: 'cascade'}),
+      .references(() => workspaceMembershipsTable.id, {onDelete: 'cascade'}),
     createdAt: timestamp('created_at', {withTimezone: true})
       .notNull()
       .defaultNow(),
