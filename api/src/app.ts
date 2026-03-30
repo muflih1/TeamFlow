@@ -9,7 +9,8 @@ import apiRouter from './routes/index.js';
 import http from 'node:http';
 import {Server} from 'socket.io';
 import {verifyToken} from './lib/paseto.js';
-import { env } from './lib/env.js';
+import {env} from './lib/env.js';
+import morgan from 'morgan';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app
   .use(helmet({crossOriginResourcePolicy: {policy: 'cross-origin'}}))
   .use(cors({origin: env.WWW_URL, credentials: true}))
   .use(cookieParser())
+  .use(morgan('common'))
   .use(requestContextHandler)
   .use(deserializeSession);
 
@@ -62,8 +64,8 @@ io.on('connection', socket => {
   });
 
   socket.on('workspace_request_unsubscribe', ({id}) => {
-    socket.leave(id)
-  })
+    socket.leave(id);
+  });
 
   socket.on('disconnect', reason => {
     console.log('DISCONNECTED:', reason);

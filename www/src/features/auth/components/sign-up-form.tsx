@@ -2,12 +2,13 @@ import {Button} from '@/components/ui/button';
 import {useForm} from '@tanstack/react-form';
 import {z} from 'zod';
 import {AuthTextInput} from './auth-text-input';
-import {getAxios} from '@/lib/axios';
 import {useMutation} from '@tanstack/react-query';
+import {signUp as signUpFn} from '../lib/auth.functions';
+import {useServerFn} from '@tanstack/react-start';
 
 const schema = z
   .object({
-    name: z.string().min(1, {error: 'What\'s your name?'}),
+    name: z.string().min(1, {error: "What's your name?"}),
     email: z.email(),
     password: z.string().min(1),
     confirm_password: z.string().min(1),
@@ -20,10 +21,9 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 export function SignUpForm() {
-  const axios = getAxios();
-
-  const {mutate: signUpSync} = useMutation({
-    mutationFn: (values: FormData) => axios.post('/auth/sign-up', values),
+  const signUp = useServerFn(signUpFn);
+  const {mutate: signUpMutationSync} = useMutation({
+    mutationFn: (data: FormData) => signUp({data}),
   });
 
   const form = useForm({
@@ -37,7 +37,7 @@ export function SignUpForm() {
       onChange: schema,
     },
     onSubmit: ({value}) => {
-      signUpSync(value, {
+      signUpMutationSync(value, {
         onSuccess: () => {
           window.location.replace('/');
         },
@@ -75,7 +75,7 @@ export function SignUpForm() {
               value={field.state.value}
               onValueChange={field.handleChange}
               onBlur={field.handleBlur}
-              placeholder="Full name"
+              placeholder='Full name'
             />
           )}
         </form.Field>
