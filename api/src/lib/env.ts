@@ -1,7 +1,7 @@
 import {z} from 'zod';
 
 const schema = z.object({
-  PORT: z.string().min(4),
+  PORT: z.string().min(2),
   DATABASE_URL: z.url(),
   WWW_URL: z.url(),
   R2_ACCESS_KEY_ID: z.string().nonempty(),
